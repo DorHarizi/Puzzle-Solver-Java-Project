@@ -1,4 +1,4 @@
-
+A*
 with time
 no open
 2x4

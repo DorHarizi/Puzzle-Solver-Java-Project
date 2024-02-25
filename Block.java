@@ -7,10 +7,8 @@ public class Block {
     private int value;
     // Color of the block
     private String color;
-
     // Cost associated with moving the block
     private int priceOfMove;
-
     // Number of moves made with this block
     private int numOfMove;
 
@@ -28,22 +26,15 @@ public class Block {
     /**
      * Copy constructor. Creates a new Block instance by copying the properties of another block.
      *
-     * @param tmp The Block instance to copy from.
+     * @param copyBlock The Block instance to copy from.
      */
-    public Block(Block tmp){
-        this.value = tmp.value;
-        this.color = tmp.color;
-        this.priceOfMove = tmp.priceOfMove;
-        this.numOfMove = tmp.numOfMove;
+    public Block(Block copyBlock){
+        this.value = copyBlock.value;
+        this.color = copyBlock.color;
+        this.priceOfMove = copyBlock.priceOfMove;
+        this.numOfMove = copyBlock.numOfMove;
     }
-    /**
-     * Sets the color of the block.
-     *
-     * @param value The new color of the block.
-     */
-    public void setValue(int value){
-        this.value = value;
-    }
+
     /**
      * Returns the value of the block.
      *

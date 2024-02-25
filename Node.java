@@ -7,7 +7,6 @@
 public class Node {
     // Path taken to reach the current state from the initial state
     String path;
-
     // The last move of the current state.
     String lastMove;
 
@@ -32,6 +31,8 @@ public class Node {
 
     // The index of the empty space (underscore) on the board.
     int[] underscoreIndex;
+    // The
+    static  int totalNodes;
 
     /**
      * Default constructor.
@@ -176,10 +177,10 @@ public class Node {
         // Attempt to move left unless the last move was right
         if(operator.equals("LEFT")) {
             if (!this.lastMove.equals("RIGHT")) {
-                if ((0 <= this.underscoreIndex[1] - 1) && (this.underscoreIndex[1] - 1 < this.board[0].length)) {
+                if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
                     // Update the child node with the results of the move
                     res = true;
-                    child.underscoreIndex[1]--;
+                    child.underscoreIndex[1]++;
                     updateChildAfterMove(child, "LEFT", "R-");
                 }
             }
@@ -187,10 +188,10 @@ public class Node {
         // Attempt to move up unless the last move was up
         if(operator.equals("UP")) {
             if (!this.lastMove.equals("DOWN")) {
-                if ((0 <= this.underscoreIndex[0] - 1) && (this.underscoreIndex[0] - 1 < this.board.length)) {
+                if ((0 <= this.underscoreIndex[0] + 1) && (this.underscoreIndex[0] + 1 < this.board.length)) {
                     // Update the child node with the results of the move
                     res = true;
-                    child.underscoreIndex[0]--;
+                    child.underscoreIndex[0]++;
                     flag = 1;
                     updateChildAfterMove(child, "UP", "D-");
                 }
@@ -199,10 +200,10 @@ public class Node {
         // Attempt to move right unless the last move was left
         if(operator.equals("RIGHT")){
             if (!this.lastMove.equals("LEFT")) {
-                if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
+                if ((0 <= this.underscoreIndex[1] - 1) && (this.underscoreIndex[1] - 1 < this.board[0].length)) {
                     // Update the child node with the results of the move
                     res = true;
-                    child.underscoreIndex[1]++;
+                    child.underscoreIndex[1]--;
                     flag = 2;
                     updateChildAfterMove(child, "RIGHT", "L-");
                 }
@@ -211,10 +212,10 @@ public class Node {
         // Attempt to move down unless the last move was up
         if(operator.equals("DOWN")) {
             if (!this.lastMove.equals("UP")) {
-                if ((0 <= this.underscoreIndex[0] + 1) && (this.underscoreIndex[0] + 1 < this.board.length)) {
+                if ((0 <= this.underscoreIndex[0] - 1) && (this.underscoreIndex[0] - 1 < this.board.length)) {
                     // Update the child node with the results of the move
                     res = true;
-                    child.underscoreIndex[0]++;
+                    child.underscoreIndex[0]--;
                     flag = 3;
                     updateChildAfterMove(child, "DOWN", "U-");
                 }
@@ -231,6 +232,7 @@ public class Node {
             child.g = this.g + child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].getPriceOfMove();
             this.swapBlocks(child);
             child.setKey(child.makeKey());
+            totalNodes ++;
             this.children[flag] = child;
 
         }
@@ -275,13 +277,6 @@ public class Node {
             }
             matrix.append("\n");
         }
-//        String childArray;
-//        for(int i = 0; i < this.children.length; i++){
-//            if(this.children[i] != null){
-//                childArray += this.children[i].toString();
-//            }
-//        }
-//        if(childArray.isEmpty()){childArray.append("null");}
         return
                 " \npath='" + this.path + '\'' +
 //                " \nlastMove='" + lastMove + '\'' +

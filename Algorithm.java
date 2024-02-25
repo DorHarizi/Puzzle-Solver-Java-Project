@@ -127,41 +127,48 @@ public class Algorithm {
         if (isGoal(n, goal)) {
             // If so, construct and return the solution details
             String finalPath = n.path.substring(0, n.path.length() - 1);
-            return finalPath + "\n" + "Num: "+ tmp33 + "\n" + "Cost: " + n.g;
+            return finalPath + "\n" + "Num: "+ Node.totalNodes + "\n" + "Cost: " + n.g;
         } else if (limited == 0) {
             // If the depth limit is reached, return "cutoff"
             return "cutoff";
-        }
-        // Mark the current node as visited
-        visited.put(n.getKey(), n);
-        boolean isCutOff = false; // Flag to track if any branch was cut off due to depth limit
-        // Explore child nodes for each possible move
-        for (int i = 0; i < this.operator.length; i++) {
-            // Attempt to move in the current direction
-            boolean canMove = n.Move(this.operator[i]);
-            if (canMove) {
-                if (!visited.containsKey(n.children[i].getKey())) {
+        }else{
+            // Mark the current node as visited
+            visited.put(n.getKey(), n);
+            boolean isCutOff = false; // Flag to track if any branch was cut off due to depth limit
+            if(this.openFlag){
+                for(Map.Entry<String, Node> item: visited.entrySet()){
+                    System.out.println(item);
+                }
+                System.out.println("-----------------------------");
+
+            }
+            // Explore child nodes for each possible move
+            for (int i = 0; i < this.operator.length; i++) {
+                // Attempt to move in the current direction
+                if (n.Move(this.operator[i])) {
                     // If the move is successful and the child node is not already visited
-                    Node child = n.children[i].deepCopy();
+                    Node child = n.children[i];
+                    if (visited.containsKey(child.getKey())) {
+                        continue;
+                    }
                     // Recursively call Limited_DFS with the child node and decreased depth limit
                     String result = Limited_DFS(child, goal, limited - 1, visited);
                     if (result.equals("cutoff")) {
                         // If a cutoff occurred, set the flag
                         isCutOff = true;
-                        tmp33 ++;
                     } else if (!result.equals("no path")) {
                         // If a solution is found, return the result
                         return result;
                     }
                 }
             }
-        }
-        // Return "cutoff" if any child was cut off, otherwise "no path"
-        visited.remove(n.getKey());
-        if (isCutOff) {
-            return "cutoff";
-        } else {
-            return "no path";
+            // Return "cutoff" if any child was cut off, otherwise "no path"
+            visited.remove((n.getKey()));
+            if (isCutOff) {
+                return "cutoff";
+            } else {
+                return "no path";
+            }
         }
     }
 
@@ -322,6 +329,9 @@ public class Algorithm {
         // Main loop of A* search
         while (!openList.isEmpty()) {
             Node currentNode = openList.poll(); // Get node with lowest f value
+            if(this.openFlag){
+                System.out.println(currentNode);
+            }
             // Check if current node is the goal state
             if (isGoal(currentNode, goal)) {
                 // Construct and return the solution path and metrics
@@ -391,6 +401,7 @@ public class Algorithm {
 
             while (!stack.isEmpty()) {
                 Node currentNode = stack.pop();
+
                 if (currentNode.isOut()) {
                     visited.remove(currentNode); // Remove if marked as "out"
                 } else {
@@ -399,9 +410,11 @@ public class Algorithm {
                     visited.put(currentNode, true);
 
                     for (int i = 0; i < this.operator.length; i++) {
-                        boolean canMove = currentNode.Move(this.operator[i]);
-                        if (canMove) {
-                            Node child = currentNode.children[i].deepCopy();
+                        if (currentNode.Move(this.operator[i])) {
+                            Node child = currentNode.children[i];
+                            if(this.openFlag){
+                                System.out.println(currentNode);
+                            }
                             totalNodes ++;
                             child.h = calculateHeuristic(child, goal);
                             child.f = child.g + child.h;
@@ -441,7 +454,10 @@ public class Algorithm {
      *         it returns Integer.MAX_VALUE.
      */
     long calculateInitialUpperBound(int n) {
-        return (n <= 12) ? factorial(n) : Integer.MAX_VALUE;
+        if (n <= 12)
+                return factorial(n);
+        else
+            return Integer.MAX_VALUE;
     }
 
     /**
@@ -483,7 +499,7 @@ public class Algorithm {
         H.put(startGame, false); // False indicates the node is not "out"
 
         String resultPath = "no path";
-        long resultCost = Long.MAX_VALUE;
+        long resultCost = calculateInitialUpperBound(startGame.board.length * startGame.board[0].length -1);
         long totalNodesCreated = 0; // Start node is already created
 
         while (!L.isEmpty()) {
@@ -498,13 +514,16 @@ public class Algorithm {
                 List<Node> N = new ArrayList<>();
                 for (int i = 0; i < this.operator.length; i++) {
                     if (currentNode.Move(this.operator[i])) {
-                        Node child = currentNode.children[i].deepCopy();
+                        Node child = currentNode.children[i];
                         totalNodesCreated++; // Increment for every new node created
                         child.h = calculateHeuristic(child, goal);
                         child.f = child.g + child.h;
 
                         if (child.f < resultCost) { // Consider only if cost is below the current result
                             N.add(child);
+                            if(this.openFlag){
+                                System.out.println(child);
+                            }
                         }
                     }
                 }
