@@ -23,9 +23,13 @@ This repository contains the following key Java files:
 To run the project, you will need to have Java installed on your system. Follow these steps:
 
 1. **Compile the Java Files**: Navigate to the project directory and compile the Java files using the javac compiler.
-  ```
-  javac Ex1.java Algorithm.java Node.java Block.java  
-  ```
+    ```
+    javac Ex1.java Algorithm.java Node.java Block.java  
+    ```
 2. **Prepare the Input File**: Create an `input.txt` file in the project directory with the puzzle configuration, algorithm choice, and flags as described in the Ex1.java file.
 3. **Run the Solver**: Execute the main class to start solving the puzzle.
+   ```
+   java Ex1
+   ```
+
 
