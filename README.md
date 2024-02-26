@@ -31,5 +31,7 @@ To run the project, you will need to have Java installed on your system. Follow 
    ```
    java Ex1
    ```
+4. **Check the Output**: Upon completion, the solution will be written to `output.txt`, including the solution path, total cost, nodes created, and elapsed time (if applicable).
+
 
 
