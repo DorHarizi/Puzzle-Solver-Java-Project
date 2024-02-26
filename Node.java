@@ -165,53 +165,51 @@ public class Node {
         Node child = this.deepCopy();
 
         // Attempt to move left unless the last move was right and the operator is available (in the range)
-        switch (operator) {
-            case "LEFT" -> {
-                if (!this.lastMove.equals("RIGHT")) {
-                    if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
-                        // Update the child node with the results of the move
-                        res = true;
-                        child.underscoreIndex[1]++;
-                        updateChildAfterMove(child, "LEFT", "R-");
-                    }
+        if(operator.equals("LEFT")) {
+            if (!this.lastMove.equals("RIGHT")) {
+                if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
+                    // Update the child node with the results of the move
+                    res = true;
+                    child.underscoreIndex[1]++;
+                    updateChildAfterMove(child, "LEFT", "L-");
                 }
             }
-            // Attempt to move up unless the last move was up and the operator is available (in the range)
-            case "UP" -> {
+        }
+        // Attempt to move up unless the last move was up and the operator is available (in the range)
+        else if(operator.equals("UP")) {
                 if (!this.lastMove.equals("DOWN")) {
                     if ((0 <= this.underscoreIndex[0] + 1) && (this.underscoreIndex[0] + 1 < this.board.length)) {
                         // Update the child node with the results of the move
                         res = true;
                         child.underscoreIndex[0]++;
                         flag = 1;
-                        updateChildAfterMove(child, "UP", "D-");
+                        updateChildAfterMove(child, "UP", "U-");
                     }
                 }
-            }
-            // Attempt to move right unless the last move was left and the operator is available (in the range)
-            case "RIGHT" -> {
+        }
+        // Attempt to move right unless the last move was left and the operator is available (in the range)
+        else if(operator.equals("RIGHT")) {
                 if (!this.lastMove.equals("LEFT")) {
                     if ((0 <= this.underscoreIndex[1] - 1) && (this.underscoreIndex[1] - 1 < this.board[0].length)) {
                         // Update the child node with the results of the move
                         res = true;
                         child.underscoreIndex[1]--;
                         flag = 2;
-                        updateChildAfterMove(child, "RIGHT", "L-");
+                        updateChildAfterMove(child, "RIGHT", "R-");
                     }
                 }
-            }
-            // Attempt to move down unless the last move was up and the operator is available (in the range)
-            case "DOWN" -> {
+        }
+        // Attempt to move down unless the last move was up and the operator is available (in the range)
+        else if(operator.equals("DOWN")) {
                 if (!this.lastMove.equals("UP")) {
                     if ((0 <= this.underscoreIndex[0] - 1) && (this.underscoreIndex[0] - 1 < this.board.length)) {
                         // Update the child node with the results of the move
                         res = true;
                         child.underscoreIndex[0]--;
                         flag = 3;
-                        updateChildAfterMove(child, "DOWN", "U-");
+                        updateChildAfterMove(child, "DOWN", "D-");
                     }
                 }
-            }
         }
         //If the operator is available and the last move does not become the current move
         if(res){

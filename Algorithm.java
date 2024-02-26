@@ -576,14 +576,16 @@ public class Algorithm {
      *         no solution was found or that the specified algorithm is not supported if applicable.
      */
     public String startGame(Node startGame, int [][] goal){
-        String res = "no path";
-        return switch (this.algorithm) {
-            case "DFID" -> dfid(startGame, goal);
-            case "A*" -> aStar(startGame, goal);
-            case "IDA*" -> idaStar(startGame, goal);
-            case "DFBnB" -> dfbNb(startGame, goal);
-            default -> res;
-        };
+        String res = "Input Error";
+        if(this.algorithm.equals("DFID"))
+            return dfid(startGame, goal);
+        else if (this.algorithm.equals("A*"))
+            return aStar(startGame, goal);
+        else if (this.algorithm.equals("IDA*"))
+            return idaStar(startGame, goal);
+        else if (this.algorithm.equals("DFBnB"))
+            return dfbNb(startGame, goal);
+        return res;
     }
 }
 
