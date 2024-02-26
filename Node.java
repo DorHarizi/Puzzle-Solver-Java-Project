@@ -1,5 +1,5 @@
 /**
- * Represents a state in the puzzle game, encapsulating a board configuration of NxM blocks.
+ * Represents a state in the puzzle game, encapsulating a board configuration of NxM-1 blocks.
  * This class serves as a model node for implementing search algorithms such as
  * Depth-First Iterative Deepening (DFID), A*, IDA* (Iterative Deepening A*), and
  * Depth-Bounded Depth-First Search (DBnB).
@@ -9,30 +9,24 @@ public class Node {
     String path;
     // The last move of the current state.
     String lastMove;
-
     // A unique key representing the state configuration.
     String key;
-
     // Cost to reach this state from the initial state
     int g;
     // Heuristic estimate of the cost to reach the goal state from this state
     double h;
-
     // Estimated total cost (f = g + h) to reach the goal state from the initial state through this state
     double f;
-
+    // Symbolizes if the state is marked
     boolean isOut;
-
     // The board configuration.
     Block[][] board;
-
     // Children nodes generated from this state by applying possible moves
     Node[] children;
-
     // The index of the empty space (underscore) on the board.
     int[] underscoreIndex;
     // The
-    static  int totalNodes;
+    static  int totalNodes = 0;
 
     /**
      * Default constructor.
@@ -95,8 +89,15 @@ public class Node {
         this.key = key;
     }
 
+    /**
+     * Retrieves if the state is marked.
+     * @return The boolean if the state is marked.
+     */
     public boolean isOut() {return isOut;}
-
+    /**
+     * Sets if the node is mark or no.
+     * @param out The new key to set for the node.
+     */
     public void setOut(boolean out) {isOut = out;}
 
     /**
@@ -137,7 +138,7 @@ public class Node {
         }
 
         // Deep copying the board array and each Block within it
-        if (this.board != null) {
+        if (this.board != null){
             copy.board = new Block[this.board.length][];
             for (int i = 0; i < this.board.length; i++) {
                 copy.board[i] = new Block[this.board[i].length];
@@ -147,17 +148,6 @@ public class Node {
             }
             copy.setKey(this.getKey()); // Setting the key for the copied node
         }
-
-        // Recursively deep copying the children nodes
-        if (this.children != null) {
-            copy.children = new Node[4];
-            for (int i = 0; i < this.children.length; i++) {
-                if (this.children[i] != null) {
-                    copy.children[i] = this.children[i].deepCopy();
-                }
-            }
-        }
-
         return copy;
     }
 
@@ -172,56 +162,61 @@ public class Node {
     public boolean Move(String operator){
         boolean res = false; // Flag to indicate if the move was successful
         int flag = 0; // Used to index into the children array after a successful move
-        Node child;
-        child = this.deepCopy();
-        // Attempt to move left unless the last move was right
-        if(operator.equals("LEFT")) {
-            if (!this.lastMove.equals("RIGHT")) {
-                if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
-                    // Update the child node with the results of the move
-                    res = true;
-                    child.underscoreIndex[1]++;
-                    updateChildAfterMove(child, "LEFT", "R-");
+        Node child = this.deepCopy();
+
+        // Attempt to move left unless the last move was right and the operator is available (in the range)
+        switch (operator) {
+            case "LEFT" -> {
+                if (!this.lastMove.equals("RIGHT")) {
+                    if ((0 <= this.underscoreIndex[1] + 1) && (this.underscoreIndex[1] + 1 < this.board[0].length)) {
+                        // Update the child node with the results of the move
+                        res = true;
+                        child.underscoreIndex[1]++;
+                        updateChildAfterMove(child, "LEFT", "R-");
+                    }
+                }
+            }
+            // Attempt to move up unless the last move was up and the operator is available (in the range)
+            case "UP" -> {
+                if (!this.lastMove.equals("DOWN")) {
+                    if ((0 <= this.underscoreIndex[0] + 1) && (this.underscoreIndex[0] + 1 < this.board.length)) {
+                        // Update the child node with the results of the move
+                        res = true;
+                        child.underscoreIndex[0]++;
+                        flag = 1;
+                        updateChildAfterMove(child, "UP", "D-");
+                    }
+                }
+            }
+            // Attempt to move right unless the last move was left and the operator is available (in the range)
+            case "RIGHT" -> {
+                if (!this.lastMove.equals("LEFT")) {
+                    if ((0 <= this.underscoreIndex[1] - 1) && (this.underscoreIndex[1] - 1 < this.board[0].length)) {
+                        // Update the child node with the results of the move
+                        res = true;
+                        child.underscoreIndex[1]--;
+                        flag = 2;
+                        updateChildAfterMove(child, "RIGHT", "L-");
+                    }
+                }
+            }
+            // Attempt to move down unless the last move was up and the operator is available (in the range)
+            case "DOWN" -> {
+                if (!this.lastMove.equals("UP")) {
+                    if ((0 <= this.underscoreIndex[0] - 1) && (this.underscoreIndex[0] - 1 < this.board.length)) {
+                        // Update the child node with the results of the move
+                        res = true;
+                        child.underscoreIndex[0]--;
+                        flag = 3;
+                        updateChildAfterMove(child, "DOWN", "U-");
+                    }
                 }
             }
         }
-        // Attempt to move up unless the last move was up
-        if(operator.equals("UP")) {
-            if (!this.lastMove.equals("DOWN")) {
-                if ((0 <= this.underscoreIndex[0] + 1) && (this.underscoreIndex[0] + 1 < this.board.length)) {
-                    // Update the child node with the results of the move
-                    res = true;
-                    child.underscoreIndex[0]++;
-                    flag = 1;
-                    updateChildAfterMove(child, "UP", "D-");
-                }
-            }
-        }
-        // Attempt to move right unless the last move was left
-        if(operator.equals("RIGHT")){
-            if (!this.lastMove.equals("LEFT")) {
-                if ((0 <= this.underscoreIndex[1] - 1) && (this.underscoreIndex[1] - 1 < this.board[0].length)) {
-                    // Update the child node with the results of the move
-                    res = true;
-                    child.underscoreIndex[1]--;
-                    flag = 2;
-                    updateChildAfterMove(child, "RIGHT", "L-");
-                }
-            }
-        }
-        // Attempt to move down unless the last move was up
-        if(operator.equals("DOWN")) {
-            if (!this.lastMove.equals("UP")) {
-                if ((0 <= this.underscoreIndex[0] - 1) && (this.underscoreIndex[0] - 1 < this.board.length)) {
-                    // Update the child node with the results of the move
-                    res = true;
-                    child.underscoreIndex[0]--;
-                    flag = 3;
-                    updateChildAfterMove(child, "DOWN", "U-");
-                }
-            }
-        }
+        //If the operator is available and the last move does not become the current move
         if(res){
+            //Check if the goal block is white and have a number of move available,
+            // if true reducing the number of move
             if(child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].getColor().equals("white")){
                 if(child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].getNumOfMove() > 0){
                     child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].setNumOfMove(child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].getNumOfMove() -1);
@@ -229,12 +224,12 @@ public class Node {
                 else
                     return false;
             }
+            // Update the current state after successful the move
             child.g = this.g + child.board[child.underscoreIndex[0]][child.underscoreIndex[1]].getPriceOfMove();
             this.swapBlocks(child);
             child.setKey(child.makeKey());
             totalNodes ++;
             this.children[flag] = child;
-
         }
         return res;
     }
@@ -277,13 +272,6 @@ public class Node {
             }
             matrix.append("\n");
         }
-        return
-                " \npath='" + this.path + '\'' +
-//                " \nlastMove='" + lastMove + '\'' +
-//                " \ncurrentCost=" + currentCost +
-                  "\n"+ matrix;
-//                " \nchildren=" + childArray +
-//                " \nunderscoreIndex=" + Arrays.toString(underscoreIndex) +
-
+        return "\nThis node number: "+ Node.totalNodes +"\npath= " + this.path + "\n"+ matrix;
     }
 }

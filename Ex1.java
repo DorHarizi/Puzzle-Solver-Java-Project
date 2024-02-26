@@ -47,7 +47,7 @@ public class Ex1 {
             Node start = new Node(board);
 
             //Send the data from the user and start the process in Algorithm class
-            Algorithm myAlgo = new Algorithm(algorithm, timeFlag, openFlag, numOfRow, numOfCol, 0);
+            Algorithm myAlgo = new Algorithm(algorithm, timeFlag, openFlag, numOfRow, numOfCol);
             long startTime = System.currentTimeMillis();
             String res = myAlgo.startGame(start,myAlgo.getGoal());
             long endTime = System.currentTimeMillis();

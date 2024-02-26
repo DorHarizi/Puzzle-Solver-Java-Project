@@ -1,4 +1,0 @@
-6L-1U-2R-6D-7R-5R-4U-3L-6L-7D-5R-6U-7L-2L-1D-5R-6R-7U-3R-4D
-Num: 9709
-Cost: 600
-0.615 seconds
